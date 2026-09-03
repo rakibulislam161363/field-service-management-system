@@ -1,0 +1,16 @@
+model Invoice {
+  id              String        @id @default(cuid())
+  serviceRequestId String        @unique
+  customerId      String
+  amount          Decimal       @db.Decimal(10, 2)
+  status          InvoiceStatus @default(UNPAID)
+  dueDate         DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  serviceRequest ServiceRequest @relation(fields: [serviceRequestId], references: [id])
+
+  customer User @relation(fields: [customerId],references: [id])
+
+  payments Payment[]
+}

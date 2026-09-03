@@ -1,0 +1,14 @@
+model ServiceReport {
+  id              String   @id @default(cuid())
+  serviceRequestId String   @unique
+  workOrderId      String   @unique
+  technicianNotes  String?
+  workDescription  String?
+  materialsUsed    String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  serviceRequest ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+
+  workOrder WorkOrder @relation(fields: [workOrderId],references: [id], onDelete: Cascade)
+}

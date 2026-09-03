@@ -1,0 +1,11 @@
+model TechnicianSkill {
+  id           String @id @default(cuid())
+  technicianId String
+  skillId      String
+
+  technician TechnicianProfile @relation(fields: [technicianId], references: [id], onDelete: Cascade)
+
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([technicianId, skillId])
+}

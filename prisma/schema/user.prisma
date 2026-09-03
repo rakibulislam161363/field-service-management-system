@@ -1,0 +1,29 @@
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authProvider       AuthProvider @default(CREDENTIAL)
+  emailVerified      Boolean      @default(false)
+  status             UserStatus   @default(ACTIVE)
+  needPasswordChange Boolean      @default(false)
+  imageUrl           String      @default("")
+  imagePublicId      String     @default("")
+  isDeleted          Boolean      @default(false)
+
+  customerProfile   CustomerProfile?
+  technicianProfile TechnicianProfile?
+
+  serviceRequests ServiceRequest[]
+  assignments     Assignment[]
+  notifications   Notification[]
+  invoices        Invoice[]
+  payments        Payment[]
+  feedbacks       Feedback[]
+  @@map("users")
+}

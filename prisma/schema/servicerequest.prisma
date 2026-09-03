@@ -1,0 +1,23 @@
+model ServiceRequest {
+  id            String               @id @default(cuid())
+  customerId    String
+  categoryId    String
+  title         String
+  description   String
+  address       String
+  preferredDate DateTime?
+  status        ServiceRequestStatus @default(PENDING)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  customer User @relation(fields: [customerId],references: [id],onDelete: Cascade)
+
+  category ServiceCategory @relation(fields:[categoryId],references: [id])
+
+  assignments   Assignment[]
+  workOrder     WorkOrder?
+  attachments   Attachment[]
+  serviceReport ServiceReport?
+  invoice       Invoice?
+  feedback      Feedback?
+}

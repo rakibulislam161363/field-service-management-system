@@ -1,0 +1,12 @@
+model Feedback {
+  id              String   @id @default(cuid())
+  serviceRequestId String   @unique
+  customerId      String
+  rating          Int
+  comment         String?
+  createdAt       DateTime @default(now())
+
+  serviceRequest ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+
+  customer User @relation(fields: [customerId],references: [id])
+}

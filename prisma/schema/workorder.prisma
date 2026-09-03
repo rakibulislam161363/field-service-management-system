@@ -1,0 +1,17 @@
+model WorkOrder {
+  id              String          @id @default(cuid())
+  serviceRequestId String          @unique
+  assignmentId     String          @unique
+  status            WorkOrderStatus @default(ASSIGNED)
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  serviceRequest ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+
+  assignment Assignment @relation(fields: [assignmentId],references: [id])
+
+  attachments   Attachment[]
+  serviceReport ServiceReport?
+}

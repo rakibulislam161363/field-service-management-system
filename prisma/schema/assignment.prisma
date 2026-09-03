@@ -1,0 +1,20 @@
+model Assignment {
+  id            String           @id @default(cuid())
+  serviceRequestId String
+  technicianId  String
+  assignedById  String
+  scheduledAt   DateTime?
+  status        AssignmentStatus @default(PENDING)
+  notes         String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  serviceRequest ServiceRequest @relation(fields:[serviceRequestId], references: [id], onDelete: Cascade)
+  technician TechnicianProfile @relation(fields: [technicianId], references: [id])
+
+  assignedBy User @relation(fields: [assignedById],references: [id])
+
+  workOrder WorkOrder?
+
+  @@index([technicianId, scheduledAt])
+}

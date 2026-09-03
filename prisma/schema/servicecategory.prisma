@@ -1,0 +1,9 @@
+model ServiceCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  basePrice   Decimal? @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+
+  serviceRequests ServiceRequest[]
+}
