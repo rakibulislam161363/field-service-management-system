@@ -45,7 +45,7 @@ export const seedSuperAdmin = async () => {
 			},
 		});
 
-		console.log("Super Admin Created : ", superAdmin);
+		console.log("Admin Created : ", superAdmin);
 	} catch (error) {
 		console.log("Error Seeding Super Admin : ", error);
 
@@ -93,13 +93,13 @@ export const seedTesterAdmin = async () => {
 				name,
 				email,
 				password: hashedPassword,
-				role: Role.ADMIN,
+				role: Role.MANAGER,
 				needPasswordChange: false,
 				emailVerified: true,
 			},
 		});
 
-		console.log("Tester Admin Created : ", testerAdmin);
+		console.log("mmanager Created : ", testerAdmin);
 	} catch (error) {
 		console.log("Error Seeding Tester Admin : ", error);
 
@@ -163,7 +163,7 @@ export const seedTesterDoctor = async () => {
 			},
 		});
 
-		console.log("Tester Doctor Created : ", testerDoctor);
+		console.log("TECHNICIAN Doctor Created : ", testerDoctor);
 	} catch (error) {
 		console.log("Error Seeding Tester Doctor : ", error);
 

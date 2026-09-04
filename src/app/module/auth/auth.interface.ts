@@ -5,13 +5,13 @@ export interface ILoginUserPayload {
 	password: string;
 }
 
-export interface IRegisterPatientPayload {
+export interface IRegistercustomerPayload {
 	name: string;
 	email: string;
 	password: string;
-	patient: {
-		contactNumber?: string;
-	};
+	// customerProfile: {
+	// 	contactNumber?: string;
+	// };
 }
 export interface IVerifyEmailPayload {
 	email: string;

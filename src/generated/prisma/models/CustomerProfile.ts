@@ -26,6 +26,8 @@ export type AggregateCustomerProfile = {
 
 export type CustomerProfileMinAggregateOutputType = {
   id: string | null
+  name: string | null
+  email: string | null
   userId: string | null
   address: string | null
   city: string | null
@@ -35,6 +37,8 @@ export type CustomerProfileMinAggregateOutputType = {
 
 export type CustomerProfileMaxAggregateOutputType = {
   id: string | null
+  name: string | null
+  email: string | null
   userId: string | null
   address: string | null
   city: string | null
@@ -44,6 +48,8 @@ export type CustomerProfileMaxAggregateOutputType = {
 
 export type CustomerProfileCountAggregateOutputType = {
   id: number
+  name: number
+  email: number
   userId: number
   address: number
   city: number
@@ -55,6 +61,8 @@ export type CustomerProfileCountAggregateOutputType = {
 
 export type CustomerProfileMinAggregateInputType = {
   id?: true
+  name?: true
+  email?: true
   userId?: true
   address?: true
   city?: true
@@ -64,6 +72,8 @@ export type CustomerProfileMinAggregateInputType = {
 
 export type CustomerProfileMaxAggregateInputType = {
   id?: true
+  name?: true
+  email?: true
   userId?: true
   address?: true
   city?: true
@@ -73,6 +83,8 @@ export type CustomerProfileMaxAggregateInputType = {
 
 export type CustomerProfileCountAggregateInputType = {
   id?: true
+  name?: true
+  email?: true
   userId?: true
   address?: true
   city?: true
@@ -155,6 +167,8 @@ export type CustomerProfileGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type CustomerProfileGroupByOutputType = {
   id: string
+  name: string
+  email: string
   userId: string
   address: string | null
   city: string | null
@@ -185,6 +199,8 @@ export type CustomerProfileWhereInput = {
   OR?: Prisma.CustomerProfileWhereInput[]
   NOT?: Prisma.CustomerProfileWhereInput | Prisma.CustomerProfileWhereInput[]
   id?: Prisma.StringFilter<"CustomerProfile"> | string
+  name?: Prisma.StringFilter<"CustomerProfile"> | string
+  email?: Prisma.StringFilter<"CustomerProfile"> | string
   userId?: Prisma.StringFilter<"CustomerProfile"> | string
   address?: Prisma.StringNullableFilter<"CustomerProfile"> | string | null
   city?: Prisma.StringNullableFilter<"CustomerProfile"> | string | null
@@ -195,6 +211,8 @@ export type CustomerProfileWhereInput = {
 
 export type CustomerProfileOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -205,19 +223,23 @@ export type CustomerProfileOrderByWithRelationInput = {
 
 export type CustomerProfileWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  email?: string
   userId?: string
   AND?: Prisma.CustomerProfileWhereInput | Prisma.CustomerProfileWhereInput[]
   OR?: Prisma.CustomerProfileWhereInput[]
   NOT?: Prisma.CustomerProfileWhereInput | Prisma.CustomerProfileWhereInput[]
+  name?: Prisma.StringFilter<"CustomerProfile"> | string
   address?: Prisma.StringNullableFilter<"CustomerProfile"> | string | null
   city?: Prisma.StringNullableFilter<"CustomerProfile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CustomerProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CustomerProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id" | "userId">
+}, "id" | "email" | "userId">
 
 export type CustomerProfileOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   city?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -233,6 +255,8 @@ export type CustomerProfileScalarWhereWithAggregatesInput = {
   OR?: Prisma.CustomerProfileScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CustomerProfileScalarWhereWithAggregatesInput | Prisma.CustomerProfileScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"CustomerProfile"> | string
+  name?: Prisma.StringWithAggregatesFilter<"CustomerProfile"> | string
+  email?: Prisma.StringWithAggregatesFilter<"CustomerProfile"> | string
   userId?: Prisma.StringWithAggregatesFilter<"CustomerProfile"> | string
   address?: Prisma.StringNullableWithAggregatesFilter<"CustomerProfile"> | string | null
   city?: Prisma.StringNullableWithAggregatesFilter<"CustomerProfile"> | string | null
@@ -242,6 +266,8 @@ export type CustomerProfileScalarWhereWithAggregatesInput = {
 
 export type CustomerProfileCreateInput = {
   id?: string
+  name: string
+  email: string
   address?: string | null
   city?: string | null
   createdAt?: Date | string
@@ -251,6 +277,8 @@ export type CustomerProfileCreateInput = {
 
 export type CustomerProfileUncheckedCreateInput = {
   id?: string
+  name: string
+  email: string
   userId: string
   address?: string | null
   city?: string | null
@@ -260,6 +288,8 @@ export type CustomerProfileUncheckedCreateInput = {
 
 export type CustomerProfileUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -269,6 +299,8 @@ export type CustomerProfileUpdateInput = {
 
 export type CustomerProfileUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -278,6 +310,8 @@ export type CustomerProfileUncheckedUpdateInput = {
 
 export type CustomerProfileCreateManyInput = {
   id?: string
+  name: string
+  email: string
   userId: string
   address?: string | null
   city?: string | null
@@ -287,6 +321,8 @@ export type CustomerProfileCreateManyInput = {
 
 export type CustomerProfileUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -295,6 +331,8 @@ export type CustomerProfileUpdateManyMutationInput = {
 
 export type CustomerProfileUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -304,6 +342,8 @@ export type CustomerProfileUncheckedUpdateManyInput = {
 
 export type CustomerProfileCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -313,6 +353,8 @@ export type CustomerProfileCountOrderByAggregateInput = {
 
 export type CustomerProfileMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -322,6 +364,8 @@ export type CustomerProfileMaxOrderByAggregateInput = {
 
 export type CustomerProfileMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   address?: Prisma.SortOrder
   city?: Prisma.SortOrder
@@ -368,6 +412,8 @@ export type CustomerProfileUncheckedUpdateOneWithoutUserNestedInput = {
 
 export type CustomerProfileCreateWithoutUserInput = {
   id?: string
+  name: string
+  email: string
   address?: string | null
   city?: string | null
   createdAt?: Date | string
@@ -376,6 +422,8 @@ export type CustomerProfileCreateWithoutUserInput = {
 
 export type CustomerProfileUncheckedCreateWithoutUserInput = {
   id?: string
+  name: string
+  email: string
   address?: string | null
   city?: string | null
   createdAt?: Date | string
@@ -400,6 +448,8 @@ export type CustomerProfileUpdateToOneWithWhereWithoutUserInput = {
 
 export type CustomerProfileUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -408,6 +458,8 @@ export type CustomerProfileUpdateWithoutUserInput = {
 
 export type CustomerProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -418,6 +470,8 @@ export type CustomerProfileUncheckedUpdateWithoutUserInput = {
 
 export type CustomerProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  name?: boolean
+  email?: boolean
   userId?: boolean
   address?: boolean
   city?: boolean
@@ -428,6 +482,8 @@ export type CustomerProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type CustomerProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  name?: boolean
+  email?: boolean
   userId?: boolean
   address?: boolean
   city?: boolean
@@ -438,6 +494,8 @@ export type CustomerProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
 
 export type CustomerProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  name?: boolean
+  email?: boolean
   userId?: boolean
   address?: boolean
   city?: boolean
@@ -448,6 +506,8 @@ export type CustomerProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
 
 export type CustomerProfileSelectScalar = {
   id?: boolean
+  name?: boolean
+  email?: boolean
   userId?: boolean
   address?: boolean
   city?: boolean
@@ -455,7 +515,7 @@ export type CustomerProfileSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CustomerProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "address" | "city" | "createdAt" | "updatedAt", ExtArgs["result"]["customerProfile"]>
+export type CustomerProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "userId" | "address" | "city" | "createdAt" | "updatedAt", ExtArgs["result"]["customerProfile"]>
 export type CustomerProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -473,6 +533,8 @@ export type $CustomerProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    name: string
+    email: string
     userId: string
     address: string | null
     city: string | null
@@ -903,6 +965,8 @@ export interface Prisma__CustomerProfileClient<T, Null = never, ExtArgs extends 
  */
 export interface CustomerProfileFieldRefs {
   readonly id: Prisma.FieldRef<"CustomerProfile", 'String'>
+  readonly name: Prisma.FieldRef<"CustomerProfile", 'String'>
+  readonly email: Prisma.FieldRef<"CustomerProfile", 'String'>
   readonly userId: Prisma.FieldRef<"CustomerProfile", 'String'>
   readonly address: Prisma.FieldRef<"CustomerProfile", 'String'>
   readonly city: Prisma.FieldRef<"CustomerProfile", 'String'>

@@ -22,14 +22,14 @@ import type {
 	IForgotPasswordPayload,
 	IGoogleLoginPayload,
 	ILoginUserPayload,
-	IRegisterPatientPayload,
+	IRegistercustomerPayload,
 	IRequestUser,
 	IResetPasswordPayload,
 	IVerifyEmailPayload,
 } from "./auth.interface";
 
-const registerPatient = async (payload: IRegisterPatientPayload) => {
-	const { name, password, patient: patientData } = payload;
+const registerCustomer = async (payload: IRegistercustomerPayload) => {
+	const { name, password } = payload;
 
 	const email = payload.email.trim().toLowerCase();
 
@@ -60,7 +60,7 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
 		name,
 		email,
 		password: hashedPassword,
-		patient: patientData,
+		
 	};
 
 	await redisClient.set(
@@ -140,26 +140,26 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 		throw new AppError(httpStatus.NOT_FOUND, "Patient Doesnt Exist");
 	}
 
-	const patientPayload: IRegisterPatientPayload = JSON.parse(redisPatientData);
+	const customerPayload: IRegistercustomerPayload = JSON.parse(redisPatientData);
 
 	const createdUser = await prisma.user.create({
 		data: {
-			name: patientPayload.name,
-			email: patientPayload.email,
-			password: patientPayload.password,
-			role: Role.PATIENT,
+			name: customerPayload.name,
+			email: customerPayload.email,
+			password: customerPayload.password,
+			role: Role.CUSTOMER,
 			status: UserStatus.ACTIVE,
 			emailVerified: true,
-			patient: {
+			customerProfile: {
 				create: {
-					name: patientPayload.name,
-					email: patientPayload.email,
-					contactNumber: patientPayload?.patient?.contactNumber || "",
+					name: customerPayload.name,
+					email: customerPayload.email,
+					// contactNumber: customerPayload?.customerProfile?.contactNumber || "",
 				},
 			},
 		},
 		omit: { password: true },
-		include: { patient: true },
+		include: { customerProfile: true },
 	});
 
 	await redisClient.del(patientRegistrationKey);
@@ -184,7 +184,7 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 		html,
 	});
 
-	const { patient, ...user } = createdUser;
+	const { customerProfile, ...user } = createdUser;
 	const jwtPayload = {
 		userId: user.id,
 		name: user.name,
@@ -206,7 +206,7 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 
 	return {
 		user,
-		patient,
+		customerProfile,
 		accessToken,
 		refreshToken,
 	};
@@ -283,7 +283,7 @@ const getMe = async (user: IRequestUser) => {
 			id: user.userId,
 		},
 		include: {
-			patient: true,
+			customerProfile: true,
 		},
 		omit: {
 			password: true,
@@ -375,7 +375,7 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
 	const ifPatientExistWithGoogleAuth = await prisma.user.findUnique({
 		where: {
 			email: googleIdTokenPayload.email,
-			role: Role.PATIENT,
+			role: Role.CUSTOMER,
 			googleId: googleIdTokenPayload.sub,
 		},
 	});
@@ -386,7 +386,7 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
 		const ifPatientExistWithCredentials = await prisma.user.findUnique({
 			where: {
 				email: googleIdTokenPayload.email,
-				role: Role.PATIENT,
+				role: Role.CUSTOMER,
 				authProvider: AuthProvider.CREDENTIAL,
 			},
 		});
@@ -422,11 +422,11 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
 				data: {
 					name: googleIdTokenPayload.name,
 					email: googleIdTokenPayload.email,
-					role: Role.PATIENT,
+					role: Role.CUSTOMER,
 					googleId: googleIdTokenPayload.sub,
 					authProvider: AuthProvider.GOOGLE,
 					emailVerified: true,
-					patient: {
+					customerProfile: {
 						create: {
 							name: googleIdTokenPayload.name,
 							email: googleIdTokenPayload.email,
@@ -637,7 +637,7 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
 };
 
 export const AuthService = {
-	registerPatient,
+	registerCustomer,
 	verifyPatientEmail,
 	loginUser,
 	getMe,

@@ -9,36 +9,12 @@ const router = Router();
 
 router.post(
 	"/register",
-	// (req : Request, res : Response, next : NextFunction) => {
-
-	// 	try {
-	// 		// const payload = req.body ? req.body : {}
-	// 		const payload = req.body ?? {}
-
-	// 		const result = PatientValidation.PatientRegistrationZodSchema.safeParse(payload);
-
-	// 		if (!result.success) {
-	// 			console.log(result.error);
-	// 			console.log(result.error.issues);
-
-	// 			throw new Error(result.error.issues[0].message)
-	// 		}
-
-	// 		req.body = result.data
-
-	// 		next()
-	// 	} catch (error) {
-
-	// 		next(error)
-	// 	}
-	// },
-
-	validateRequest(UserValidation.PatientRegistrationZodSchema),
+	// validateRequest(UserValidation.CustomerRegistrationZodSchema),
 	AuthController.registerPatient,
 );
 router.post(
 	"/verify-email",
-	validateRequest(UserValidation.PatientEmailVerifyZodSchema),
+	// validateRequest(UserValidation.PatientEmailVerifyZodSchema),
 	AuthController.verifyPatientEmail,
 );
 router.post(
@@ -48,7 +24,7 @@ router.post(
 );
 router.get(
 	"/me",
-	auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN),
+	auth(Role.ADMIN, Role.CUSTOMER, Role.ADMIN, Role.TECHNICIAN),
 	// validateRequest
 	AuthController.getMe,
 );

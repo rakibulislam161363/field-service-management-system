@@ -1,5 +1,7 @@
 model CustomerProfile {
   id        String   @id @default(cuid())
+  name   String
+  email     String   @unique
   userId    String   @unique
   address   String?
   city      String?

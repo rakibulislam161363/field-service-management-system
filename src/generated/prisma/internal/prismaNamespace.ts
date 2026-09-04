@@ -1610,6 +1610,8 @@ export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof
 
 export const CustomerProfileScalarFieldEnum = {
   id: 'id',
+  name: 'name',
+  email: 'email',
   userId: 'userId',
   address: 'address',
   city: 'city',
@@ -1752,6 +1754,7 @@ export const UserScalarFieldEnum = {
   email: 'email',
   password: 'password',
   phone: 'phone',
+  googleId: 'googleId',
   role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
