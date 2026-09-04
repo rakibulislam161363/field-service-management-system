@@ -11,6 +11,7 @@ import config from "./app/config";
 import { AuthRoutes } from "./app/module/auth/auth.route";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
+import { ServiceCategoryRoutes } from "./app/module/ServiceCategory/serviceCatagory.route";
 
 
 const app: Application = express();
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", AuthRoutes);
+app.use("/api/service-categories", ServiceCategoryRoutes);
 // app.use("/api/v1/user", UserRoutes);
 // app.use("/api/v1/appointment", AppointementRoutes);
 // app.use("/api/v1/doctor", DoctorRoutes);
