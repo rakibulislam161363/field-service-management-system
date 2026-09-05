@@ -6,7 +6,7 @@ import express, {
 	type Request,
 	type Response,
 } from "express";
-// import httpStatus from "http-status";
+import httpStatus from "http-status";
 import config from "./app/config";
 import { AuthRoutes } from "./app/module/auth/auth.route";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
@@ -42,7 +42,12 @@ app.use("/api/service-categories", ServiceCategoryRoutes);
 
 
 
-
+app.get("/", async (req: Request, res: Response) => {
+	res.status(httpStatus.OK).json({
+		success: true,
+		message: "Welcome to Field Service Management System Backend",
+	});
+});
 app.use(globalErrorHandler);
 app.use(notFound);
 
