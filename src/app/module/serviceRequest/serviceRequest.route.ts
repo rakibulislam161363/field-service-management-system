@@ -7,47 +7,47 @@ import { ServiceRequestValidation } from "./serviceRequest.validation";
 const router = express.Router();
 
 router.post(
-  "/",
-  auth("CUSTOMER"),
-  validateRequest(ServiceRequestValidation.CreateServiceRequestZodSchema),
-  ServiceRequestController.createServiceRequest
+	"/",
+	auth("CUSTOMER"),
+	validateRequest(ServiceRequestValidation.CreateServiceRequestZodSchema),
+	ServiceRequestController.createServiceRequest,
 );
 
 router.get(
-  "/",
-  auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
-  ServiceRequestController.getAllServiceRequests
+	"/",
+	auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
+	ServiceRequestController.getAllServiceRequests,
 );
 
 router.get(
-  "/:id",
-  auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
-  ServiceRequestController.getSingleServiceRequest
+	"/:id",
+	auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
+	ServiceRequestController.getSingleServiceRequest,
 );
 
 router.patch(
-  "/:id",
-  auth("CUSTOMER", "MANAGER", "ADMIN"),
-  validateRequest(ServiceRequestValidation.UpdateServiceRequestZodSchema),
-  ServiceRequestController.updateServiceRequest
+	"/:id",
+	auth("CUSTOMER", "MANAGER", "ADMIN"),
+	validateRequest(ServiceRequestValidation.UpdateServiceRequestZodSchema),
+	ServiceRequestController.updateServiceRequest,
 );
 
 router.patch(
-  "/:id/approve",
-  auth("MANAGER", "ADMIN"),
-  ServiceRequestController.approveServiceRequest
+	"/:id/approve",
+	auth("MANAGER", "ADMIN"),
+	ServiceRequestController.approveServiceRequest,
 );
 
 router.patch(
-  "/:id/reject",
-  auth("MANAGER", "ADMIN"),
-  ServiceRequestController.rejectServiceRequest
+	"/:id/reject",
+	auth("MANAGER", "ADMIN"),
+	ServiceRequestController.rejectServiceRequest,
 );
 
 router.delete(
-  "/:id",
-  auth("CUSTOMER", "MANAGER", "ADMIN"),
-  ServiceRequestController.deleteServiceRequest
+	"/:id",
+	auth("CUSTOMER", "MANAGER", "ADMIN"),
+	ServiceRequestController.deleteServiceRequest,
 );
 
 export const ServiceRequestRoutes = router;

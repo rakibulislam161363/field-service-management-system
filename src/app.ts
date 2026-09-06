@@ -24,7 +24,6 @@ import { NotificationRoutes } from "./app/module/notification/notification.route
 import { AttachmentRoutes } from "./app/module/attachment/attachment.route";
 import { UserRoutes } from "./app/module/user/user.route";
 
-
 const app: Application = express();
 
 app.use(
@@ -61,8 +60,6 @@ app.use("/api/users", UserRoutes);
 // app.use("/api/v1/payment", PaymentRoutes);
 // app.use("/api/v1/prescription", PrescriptionRoutes);
 // app.use("/api/v1/analytics", AnalyticsRoutes);
-
-
 
 app.get("/", async (req: Request, res: Response) => {
 	res.status(httpStatus.OK).json({

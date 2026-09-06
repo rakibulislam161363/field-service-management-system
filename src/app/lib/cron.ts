@@ -2,7 +2,6 @@
 // import { DoctorVerificationStatus, Role } from '../../generated/prisma/enums';
 // import { prisma } from './prisma';
 
-
 // export const deleteUnverifiedDoctors = async () => {
 //     cron.schedule('*/10 * * * *', async () => {
 
@@ -18,7 +17,6 @@
 //                    }
 //                }
 //            });
-
 
 //            if (deletedDoctors.count > 0) {
 //                console.log(`

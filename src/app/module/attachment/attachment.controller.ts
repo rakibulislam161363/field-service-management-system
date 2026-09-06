@@ -1,2 +1,57 @@
-import type { Request, Response } from "express"; import { catchAsync } from "../../utils/catchAsync"; import { sendResponse } from "../../utils/sendResponse"; import { AttachmentService } from "./attachment.service";
-const createAttachment = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 201, success: true, message: "Attachment created successfully", data: await AttachmentService.createAttachment(req.body) })); const getAllAttachments = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Attachments retrieved successfully", data: await AttachmentService.getAllAttachments({ serviceRequestId: req.query.serviceRequestId as string, workOrderId: req.query.workOrderId as string }) })); const getSingleAttachment = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Attachment retrieved successfully", data: await AttachmentService.getSingleAttachment(req.params.id as string) })); const updateAttachment = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Attachment updated successfully", data: await AttachmentService.updateAttachment(req.params.id as string, req.body) })); const deleteAttachment = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Attachment deleted successfully", data: await AttachmentService.deleteAttachment(req.params.id as string) })); export const AttachmentController = { createAttachment, getAllAttachments, getSingleAttachment, updateAttachment, deleteAttachment };
+import type { Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import { AttachmentService } from "./attachment.service";
+const createAttachment = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 201,
+		success: true,
+		message: "Attachment created successfully",
+		data: await AttachmentService.createAttachment(req.body),
+	}),
+);
+const getAllAttachments = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Attachments retrieved successfully",
+		data: await AttachmentService.getAllAttachments({
+			serviceRequestId: req.query.serviceRequestId as string,
+			workOrderId: req.query.workOrderId as string,
+		}),
+	}),
+);
+const getSingleAttachment = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Attachment retrieved successfully",
+		data: await AttachmentService.getSingleAttachment(req.params.id as string),
+	}),
+);
+const updateAttachment = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Attachment updated successfully",
+		data: await AttachmentService.updateAttachment(
+			req.params.id as string,
+			req.body,
+		),
+	}),
+);
+const deleteAttachment = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Attachment deleted successfully",
+		data: await AttachmentService.deleteAttachment(req.params.id as string),
+	}),
+);
+export const AttachmentController = {
+	createAttachment,
+	getAllAttachments,
+	getSingleAttachment,
+	updateAttachment,
+	deleteAttachment,
+};

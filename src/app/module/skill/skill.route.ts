@@ -4,9 +4,22 @@ import { validateRequest } from "../../middleware/validateRequest";
 import { SkillController } from "./skill.controller";
 import { SkillValidation } from "./skill.validation";
 const router = express.Router();
-router.post("/", auth("MANAGER", "ADMIN"), validateRequest(SkillValidation.SkillZodSchema), SkillController.createSkill);
-router.get("/", auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"), SkillController.getAllSkills);
-router.get("/:id", auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"), SkillController.getSingleSkill);
+router.post(
+	"/",
+	auth("MANAGER", "ADMIN"),
+	validateRequest(SkillValidation.SkillZodSchema),
+	SkillController.createSkill,
+);
+router.get(
+	"/",
+	auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
+	SkillController.getAllSkills,
+);
+router.get(
+	"/:id",
+	auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
+	SkillController.getSingleSkill,
+);
 router.patch("/:id", auth("MANAGER", "ADMIN"), SkillController.updateSkill);
 router.delete("/:id", auth("MANAGER", "ADMIN"), SkillController.deleteSkill);
 export const SkillRoutes = router;

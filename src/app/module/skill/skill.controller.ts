@@ -2,9 +2,50 @@ import type { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { SkillService } from "./skill.service";
-const createSkill = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 201, success: true, message: "Skill created successfully", data: await SkillService.createSkill(req.body) }));
-const getAllSkills = catchAsync(async (_req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Skills retrieved successfully", data: await SkillService.getAllSkills() }));
-const getSingleSkill = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Skill retrieved successfully", data: await SkillService.getSingleSkill(req.params.id as string) }));
-const updateSkill = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Skill updated successfully", data: await SkillService.updateSkill(req.params.id as string, req.body) }));
-const deleteSkill = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Skill deleted successfully", data: await SkillService.deleteSkill(req.params.id as string) }));
-export const SkillController = { createSkill, getAllSkills, getSingleSkill, updateSkill, deleteSkill };
+const createSkill = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 201,
+		success: true,
+		message: "Skill created successfully",
+		data: await SkillService.createSkill(req.body),
+	}),
+);
+const getAllSkills = catchAsync(async (_req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Skills retrieved successfully",
+		data: await SkillService.getAllSkills(),
+	}),
+);
+const getSingleSkill = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Skill retrieved successfully",
+		data: await SkillService.getSingleSkill(req.params.id as string),
+	}),
+);
+const updateSkill = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Skill updated successfully",
+		data: await SkillService.updateSkill(req.params.id as string, req.body),
+	}),
+);
+const deleteSkill = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Skill deleted successfully",
+		data: await SkillService.deleteSkill(req.params.id as string),
+	}),
+);
+export const SkillController = {
+	createSkill,
+	getAllSkills,
+	getSingleSkill,
+	updateSkill,
+	deleteSkill,
+};

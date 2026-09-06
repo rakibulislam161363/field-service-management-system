@@ -2,9 +2,53 @@ import type { Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { WorkOrderService } from "./workOrder.service";
-const createWorkOrder = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 201, success: true, message: "Work order created successfully", data: await WorkOrderService.createWorkOrder(req.body) }));
-const getAllWorkOrders = catchAsync(async (_req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Work orders retrieved successfully", data: await WorkOrderService.getAllWorkOrders() }));
-const getSingleWorkOrder = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Work order retrieved successfully", data: await WorkOrderService.getSingleWorkOrder(req.params.id as string) }));
-const updateWorkOrder = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Work order updated successfully", data: await WorkOrderService.updateWorkOrder(req.params.id as string, req.body) }));
-const deleteWorkOrder = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Work order deleted successfully", data: await WorkOrderService.deleteWorkOrder(req.params.id as string) }));
-export const WorkOrderController = { createWorkOrder, getAllWorkOrders, getSingleWorkOrder, updateWorkOrder, deleteWorkOrder };
+const createWorkOrder = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 201,
+		success: true,
+		message: "Work order created successfully",
+		data: await WorkOrderService.createWorkOrder(req.body),
+	}),
+);
+const getAllWorkOrders = catchAsync(async (_req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Work orders retrieved successfully",
+		data: await WorkOrderService.getAllWorkOrders(),
+	}),
+);
+const getSingleWorkOrder = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Work order retrieved successfully",
+		data: await WorkOrderService.getSingleWorkOrder(req.params.id as string),
+	}),
+);
+const updateWorkOrder = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Work order updated successfully",
+		data: await WorkOrderService.updateWorkOrder(
+			req.params.id as string,
+			req.body,
+		),
+	}),
+);
+const deleteWorkOrder = catchAsync(async (req: Request, res: Response) =>
+	sendResponse(res, {
+		statusCode: 200,
+		success: true,
+		message: "Work order deleted successfully",
+		data: await WorkOrderService.deleteWorkOrder(req.params.id as string),
+	}),
+);
+export const WorkOrderController = {
+	createWorkOrder,
+	getAllWorkOrders,
+	getSingleWorkOrder,
+	updateWorkOrder,
+	deleteWorkOrder,
+};

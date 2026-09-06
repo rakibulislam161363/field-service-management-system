@@ -1,2 +1,26 @@
-import express from "express"; import { auth } from "../../middleware/checkAuth"; import { FeedbackController } from "./feedback.controller";
-const router = express.Router(); router.post("/", auth("CUSTOMER"), FeedbackController.createFeedback); router.get("/", auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"), FeedbackController.getAllFeedbacks); router.get("/:id", auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"), FeedbackController.getSingleFeedback); router.patch("/:id", auth("CUSTOMER", "ADMIN"), FeedbackController.updateFeedback); router.delete("/:id", auth("CUSTOMER", "ADMIN"), FeedbackController.deleteFeedback); export const FeedbackRoutes = router;
+import express from "express";
+import { auth } from "../../middleware/checkAuth";
+import { FeedbackController } from "./feedback.controller";
+const router = express.Router();
+router.post("/", auth("CUSTOMER"), FeedbackController.createFeedback);
+router.get(
+	"/",
+	auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
+	FeedbackController.getAllFeedbacks,
+);
+router.get(
+	"/:id",
+	auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"),
+	FeedbackController.getSingleFeedback,
+);
+router.patch(
+	"/:id",
+	auth("CUSTOMER", "ADMIN"),
+	FeedbackController.updateFeedback,
+);
+router.delete(
+	"/:id",
+	auth("CUSTOMER", "ADMIN"),
+	FeedbackController.deleteFeedback,
+);
+export const FeedbackRoutes = router;

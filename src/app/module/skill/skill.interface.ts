@@ -1,1 +1,4 @@
-export interface SkillPayload { name: string; description?: string; }
+export interface SkillPayload {
+	name: string;
+	description?: string;
+}

@@ -1,2 +1,26 @@
-import express from "express"; import { auth } from "../../middleware/checkAuth"; import { InvoiceController } from "./invoice.controller";
-const router = express.Router(); router.post("/", auth("MANAGER", "ADMIN", "FINANCE"), InvoiceController.createInvoice); router.get("/", auth("CUSTOMER", "MANAGER", "ADMIN", "FINANCE"), InvoiceController.getAllInvoices); router.get("/:id", auth("CUSTOMER", "MANAGER", "ADMIN", "FINANCE"), InvoiceController.getSingleInvoice); router.patch("/:id", auth("MANAGER", "ADMIN", "FINANCE"), InvoiceController.updateInvoice); router.delete("/:id", auth("ADMIN"), InvoiceController.deleteInvoice); export const InvoiceRoutes = router;
+import express from "express";
+import { auth } from "../../middleware/checkAuth";
+import { InvoiceController } from "./invoice.controller";
+const router = express.Router();
+router.post(
+	"/",
+	auth("MANAGER", "ADMIN", "FINANCE"),
+	InvoiceController.createInvoice,
+);
+router.get(
+	"/",
+	auth("CUSTOMER", "MANAGER", "ADMIN", "FINANCE"),
+	InvoiceController.getAllInvoices,
+);
+router.get(
+	"/:id",
+	auth("CUSTOMER", "MANAGER", "ADMIN", "FINANCE"),
+	InvoiceController.getSingleInvoice,
+);
+router.patch(
+	"/:id",
+	auth("MANAGER", "ADMIN", "FINANCE"),
+	InvoiceController.updateInvoice,
+);
+router.delete("/:id", auth("ADMIN"), InvoiceController.deleteInvoice);
+export const InvoiceRoutes = router;

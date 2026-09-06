@@ -1,10 +1,46 @@
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/AppError";
-import type { CreateServiceReportPayload, UpdateServiceReportPayload } from "./serviceReport.interface";
+import type {
+	CreateServiceReportPayload,
+	UpdateServiceReportPayload,
+} from "./serviceReport.interface";
 const include = { serviceRequest: true, workOrder: true };
-const createServiceReport = async (payload: CreateServiceReportPayload) => { const [request, order] = await Promise.all([prisma.serviceRequest.findUnique({ where: { id: payload.serviceRequestId } }), prisma.workOrder.findUnique({ where: { id: payload.workOrderId } })]); if (!request) throw new AppError(404, "Service request not found"); if (!order) throw new AppError(404, "Work order not found"); return prisma.serviceReport.create({ data: payload, include }); };
-const getAllServiceReports = async () => prisma.serviceReport.findMany({ include, orderBy: { createdAt: "desc" } });
-const getSingleServiceReport = async (id: string) => { const result = await prisma.serviceReport.findUnique({ where: { id }, include }); if (!result) throw new AppError(404, "Service report not found"); return result; };
-const updateServiceReport = async (id: string, payload: UpdateServiceReportPayload) => { await getSingleServiceReport(id); return prisma.serviceReport.update({ where: { id }, data: payload, include }); };
-const deleteServiceReport = async (id: string) => { await getSingleServiceReport(id); return prisma.serviceReport.delete({ where: { id } }); };
-export const ServiceReportService = { createServiceReport, getAllServiceReports, getSingleServiceReport, updateServiceReport, deleteServiceReport };
+const createServiceReport = async (payload: CreateServiceReportPayload) => {
+	const [request, order] = await Promise.all([
+		prisma.serviceRequest.findUnique({
+			where: { id: payload.serviceRequestId },
+		}),
+		prisma.workOrder.findUnique({ where: { id: payload.workOrderId } }),
+	]);
+	if (!request) throw new AppError(404, "Service request not found");
+	if (!order) throw new AppError(404, "Work order not found");
+	return prisma.serviceReport.create({ data: payload, include });
+};
+const getAllServiceReports = async () =>
+	prisma.serviceReport.findMany({ include, orderBy: { createdAt: "desc" } });
+const getSingleServiceReport = async (id: string) => {
+	const result = await prisma.serviceReport.findUnique({
+		where: { id },
+		include,
+	});
+	if (!result) throw new AppError(404, "Service report not found");
+	return result;
+};
+const updateServiceReport = async (
+	id: string,
+	payload: UpdateServiceReportPayload,
+) => {
+	await getSingleServiceReport(id);
+	return prisma.serviceReport.update({ where: { id }, data: payload, include });
+};
+const deleteServiceReport = async (id: string) => {
+	await getSingleServiceReport(id);
+	return prisma.serviceReport.delete({ where: { id } });
+};
+export const ServiceReportService = {
+	createServiceReport,
+	getAllServiceReports,
+	getSingleServiceReport,
+	updateServiceReport,
+	deleteServiceReport,
+};

@@ -5,33 +5,33 @@ import { auth } from "../../middleware/checkAuth";
 const router = express.Router();
 
 router.post(
-  "/",
-  auth("ADMIN", "MANAGER"),
-  ServiceCategoryController.createServiceCategory
+	"/",
+	auth("ADMIN", "MANAGER"),
+	ServiceCategoryController.createServiceCategory,
 );
 
 router.get(
-  "/",
-  auth("ADMIN", "MANAGER", "CUSTOMER", "TECHNICIAN"),
-  ServiceCategoryController.getAllServiceCategories
+	"/",
+	auth("ADMIN", "MANAGER", "CUSTOMER", "TECHNICIAN"),
+	ServiceCategoryController.getAllServiceCategories,
 );
 
 router.get(
-  "/:id",
-  auth("ADMIN", "MANAGER", "CUSTOMER", "TECHNICIAN"),
-  ServiceCategoryController.getSingleServiceCategory
+	"/:id",
+	auth("ADMIN", "MANAGER", "CUSTOMER", "TECHNICIAN"),
+	ServiceCategoryController.getSingleServiceCategory,
 );
 
 router.patch(
-  "/:id",
-  auth("ADMIN", "MANAGER"),
-  ServiceCategoryController.updateServiceCategory
+	"/:id",
+	auth("ADMIN", "MANAGER"),
+	ServiceCategoryController.updateServiceCategory,
 );
 
 router.delete(
-  "/:id",
-  auth("ADMIN", "MANAGER"),
-  ServiceCategoryController.deleteServiceCategory
+	"/:id",
+	auth("ADMIN", "MANAGER"),
+	ServiceCategoryController.deleteServiceCategory,
 );
 
 export const ServiceCategoryRoutes = router;
