@@ -1,0 +1,10 @@
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/AppError";
+import type { CustomerProfilePayload } from "./customerProfile.interface";
+const include = { user: { select: { id: true, name: true, email: true, phone: true } } };
+const createCustomerProfile = (data: CustomerProfilePayload) => prisma.customerProfile.create({ data, include });
+const getAllCustomerProfiles = () => prisma.customerProfile.findMany({ include, orderBy: { createdAt: "desc" } });
+const getSingleCustomerProfile = async (id: string) => { const result = await prisma.customerProfile.findUnique({ where: { id }, include }); if (!result) throw new AppError(404, "Customer profile not found"); return result; };
+const updateCustomerProfile = async (id: string, data: Partial<CustomerProfilePayload>) => { await getSingleCustomerProfile(id); return prisma.customerProfile.update({ where: { id }, data, include }); };
+const deleteCustomerProfile = async (id: string) => { await getSingleCustomerProfile(id); return prisma.customerProfile.delete({ where: { id } }); };
+export const CustomerProfileService = { createCustomerProfile, getAllCustomerProfiles, getSingleCustomerProfile, updateCustomerProfile, deleteCustomerProfile };

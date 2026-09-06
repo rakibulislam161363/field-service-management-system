@@ -1,0 +1,10 @@
+import type { Request, Response } from "express";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
+import { ServiceReportService } from "./serviceReport.service";
+const createServiceReport = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 201, success: true, message: "Service report created successfully", data: await ServiceReportService.createServiceReport(req.body) }));
+const getAllServiceReports = catchAsync(async (_req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Service reports retrieved successfully", data: await ServiceReportService.getAllServiceReports() }));
+const getSingleServiceReport = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Service report retrieved successfully", data: await ServiceReportService.getSingleServiceReport(req.params.id as string) }));
+const updateServiceReport = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Service report updated successfully", data: await ServiceReportService.updateServiceReport(req.params.id as string, req.body) }));
+const deleteServiceReport = catchAsync(async (req: Request, res: Response) => sendResponse(res, { statusCode: 200, success: true, message: "Service report deleted successfully", data: await ServiceReportService.deleteServiceReport(req.params.id as string) }));
+export const ServiceReportController = { createServiceReport, getAllServiceReports, getSingleServiceReport, updateServiceReport, deleteServiceReport };

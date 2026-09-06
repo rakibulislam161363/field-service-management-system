@@ -1,0 +1,12 @@
+import express from "express";
+import { auth } from "../../middleware/checkAuth";
+import { validateRequest } from "../../middleware/validateRequest";
+import { ServiceReportController } from "./serviceReport.controller";
+import { ServiceReportValidation } from "./serviceReport.validation";
+const router = express.Router();
+router.post("/", auth("TECHNICIAN", "MANAGER", "ADMIN"), validateRequest(ServiceReportValidation.CreateServiceReportZodSchema), ServiceReportController.createServiceReport);
+router.get("/", auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"), ServiceReportController.getAllServiceReports);
+router.get("/:id", auth("CUSTOMER", "TECHNICIAN", "MANAGER", "ADMIN"), ServiceReportController.getSingleServiceReport);
+router.patch("/:id", auth("TECHNICIAN", "MANAGER", "ADMIN"), validateRequest(ServiceReportValidation.UpdateServiceReportZodSchema), ServiceReportController.updateServiceReport);
+router.delete("/:id", auth("MANAGER", "ADMIN"), ServiceReportController.deleteServiceReport);
+export const ServiceReportRoutes = router;

@@ -2,7 +2,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
 	type Application,
-	type NextFunction,
 	type Request,
 	type Response,
 } from "express";
@@ -12,6 +11,8 @@ import { AuthRoutes } from "./app/module/auth/auth.route";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import { ServiceCategoryRoutes } from "./app/module/ServiceCategory/serviceCatagory.route";
+import { ServiceRequestRoutes } from "./app/module/serviceRequest/serviceRequest.route";
+import { TechnicianRoutes } from "./app/module/technician/technician.route";
 
 
 const app: Application = express();
@@ -32,7 +33,8 @@ app.use(cookieParser());
 
 app.use("/api/auth", AuthRoutes);
 app.use("/api/service-categories", ServiceCategoryRoutes);
-// app.use("/api/v1/user", UserRoutes);
+app.use("/api/service-requests", ServiceRequestRoutes);
+app.use("/api/technicians", TechnicianRoutes);
 // app.use("/api/v1/appointment", AppointementRoutes);
 // app.use("/api/v1/doctor", DoctorRoutes);
 // app.use("/api/v1/schedule", ScheduleRoutes);
