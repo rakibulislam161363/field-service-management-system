@@ -9,12 +9,12 @@ const router = Router();
 
 router.post(
 	"/register",
-	// validateRequest(UserValidation.CustomerRegistrationZodSchema),
+	validateRequest(UserValidation.CustomerRegistrationZodSchema),
 	AuthController.registerPatient,
 );
 router.post(
 	"/verify-email",
-	// validateRequest(UserValidation.PatientEmailVerifyZodSchema),
+	validateRequest(UserValidation.PatientEmailVerifyZodSchema),
 	AuthController.verifyPatientEmail,
 );
 router.post(
@@ -24,12 +24,15 @@ router.post(
 );
 router.get(
 	"/me",
-	auth(Role.ADMIN, Role.CUSTOMER, Role.ADMIN, Role.TECHNICIAN),
-	// validateRequest
+	auth(Role.ADMIN, Role.CUSTOMER, Role.TECHNICIAN, Role.MANAGER, Role.FINANCE),
 	AuthController.getMe,
 );
 router.post("/refresh-token", AuthController.refreshToken);
-router.post("/google", AuthController.googleLogin);
+router.post(
+	"/google",
+	validateRequest(UserValidation.GoogleLoginZodSchema),
+	AuthController.googleLogin,
+);
 router.post(
 	"/forgot-password",
 	validateRequest(UserValidation.ForgotPasswordZodSchema),
