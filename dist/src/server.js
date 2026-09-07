@@ -12,7 +12,7 @@ var __export = (target, all) => {
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express14 from "express";
-import httpStatus7 from "http-status";
+import httpStatus10 from "http-status";
 
 // src/app/config/index.ts
 import dotenv from "dotenv";
@@ -3584,6 +3584,372 @@ router14.patch(
 router14.delete("/:id", auth("ADMIN"), UserController.deleteUser);
 var UserRoutes = router14;
 
+// src/app/module/payment/payment.route.ts
+import { Router as Router2 } from "express";
+
+// src/app/module/payment/payment.controller.ts
+import httpStatus9 from "http-status";
+
+// src/app/module/payment/payment.service.ts
+import httpStatus8 from "http-status";
+
+// src/app/lib/bkash.ts
+import httpStatus7 from "http-status";
+var getBkashIdToken = async () => {
+  try {
+    const IdTokenKey = "bkash:idToken";
+    const RefreshTokenKey = "bkash:refreshToken";
+    let bkashIdToken = await redisClient.get(IdTokenKey);
+    const bkashIdTokenTTL = await redisClient.ttl(IdTokenKey);
+    const bkashRefreshToken = await redisClient.get(RefreshTokenKey);
+    const bkashRefreshTokenTTL = await redisClient.ttl(RefreshTokenKey);
+    if ((bkashIdTokenTTL <= 600 || !bkashIdToken) && bkashRefreshToken && bkashRefreshTokenTTL > 600) {
+      const refreshTokenResponse = await fetch(
+        `${config_default.bkash_base_url}/tokenized/checkout/token/refresh`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            username: config_default.bkash_username,
+            password: config_default.bkash_password
+          },
+          body: JSON.stringify({
+            app_key: config_default.bkash_app_key,
+            app_secret: config_default.bkash_app_secret,
+            refresh_token: bkashRefreshToken
+          })
+        }
+      );
+      if (!refreshTokenResponse.ok) {
+        throw new AppError(
+          httpStatus7.BAD_GATEWAY,
+          "Bkash Access Token Grant Failed"
+        );
+      }
+      const bkashRefreshTokenResult = await refreshTokenResponse.json();
+      bkashIdToken = bkashRefreshTokenResult.id_token;
+      await redisClient.set(IdTokenKey, bkashIdToken, {
+        expiration: {
+          type: "EX",
+          value: 60 * 60
+        }
+      });
+      return bkashIdToken;
+    }
+    if (bkashIdTokenTTL > 600) {
+      return bkashIdToken;
+    }
+    const response = await fetch(
+      `${config_default.bkash_base_url}/tokenized/checkout/token/grant`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          username: config_default.bkash_username,
+          password: config_default.bkash_password
+        },
+        body: JSON.stringify({
+          app_key: config_default.bkash_app_key,
+          app_secret: config_default.bkash_app_secret
+        })
+      }
+    );
+    if (!response.ok) {
+      throw new AppError(
+        httpStatus7.BAD_GATEWAY,
+        "Bkash Access Token Grant Failed"
+      );
+    }
+    const result = await response.json();
+    await redisClient.set(IdTokenKey, result.id_token, {
+      expiration: {
+        type: "EX",
+        value: 60 * 60
+        // 1hour
+      }
+    });
+    await redisClient.set(RefreshTokenKey, result.refresh_token, {
+      expiration: {
+        type: "EX",
+        value: 60 * 60 * 24 * 28
+        // 28 days
+      }
+    });
+    bkashIdToken = result.id_token;
+    return bkashIdToken;
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(httpStatus7.BAD_GATEWAY, error.message);
+  }
+};
+var bkashRequest = async (path4, body) => {
+  const authorization = await getBkashIdToken();
+  const response = await fetch(`${config_default.bkash_base_url}${path4}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      authorization,
+      "x-app-key": config_default.bkash_app_key
+    },
+    body: JSON.stringify(body)
+  });
+  const result = await response.json();
+  if (!response.ok || result.statusCode && result.statusCode !== "0000") {
+    throw new AppError(
+      httpStatus7.BAD_GATEWAY,
+      result.statusMessage || "Bkash Request Failed"
+    );
+  }
+  return result;
+};
+
+// src/app/module/payment/payment.service.ts
+var createPayment = async (invoiceId, user) => {
+  if (!invoiceId || typeof invoiceId !== "string") {
+    throw new AppError(httpStatus8.BAD_REQUEST, "Invoice ID Is Required");
+  }
+  const invoice = await prisma.invoice.findFirst({
+    where: { id: invoiceId, customerId: user.userId }
+  });
+  if (!invoice) {
+    throw new AppError(httpStatus8.NOT_FOUND, "Invoice Not Found");
+  }
+  if (invoice.status === "PAID") {
+    throw new AppError(httpStatus8.BAD_REQUEST, "Invoice Is Already Paid");
+  }
+  const payment = await prisma.payment.create({
+    data: {
+      invoiceId: invoice.id,
+      customerId: user.userId,
+      amount: invoice.amount,
+      paymentMethod: "BKASH"
+    }
+  });
+  try {
+    const result = await bkashRequest(
+      "/tokenized/checkout/create",
+      {
+        mode: "001",
+        payerReference: user.userId,
+        callbackURL: config_default.bkash_callback_url,
+        amount: invoice.amount.toString(),
+        currency: "BDT",
+        intent: "sale",
+        merchantInvoiceNumber: payment.id
+      }
+    );
+    const updatedPayment = await prisma.payment.update({
+      where: { id: payment.id },
+      data: { transactionId: result.paymentID }
+    });
+    return {
+      payment: updatedPayment,
+      paymentID: result.paymentID,
+      bkashURL: result.bkashURL
+    };
+  } catch (error) {
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: "FAILED" }
+    });
+    throw error;
+  }
+};
+var executePayment = async (paymentID, user) => {
+  if (!paymentID || typeof paymentID !== "string") {
+    throw new AppError(httpStatus8.BAD_REQUEST, "Payment ID Is Required");
+  }
+  const payment = await prisma.payment.findFirst({
+    where: { transactionId: paymentID, customerId: user.userId }
+  });
+  if (!payment) {
+    throw new AppError(httpStatus8.NOT_FOUND, "Payment Not Found");
+  }
+  if (payment.status === "PAID") {
+    return payment;
+  }
+  const result = await bkashRequest(
+    "/tokenized/checkout/execute",
+    { paymentID }
+  );
+  if (result.transactionStatus !== "Completed") {
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: "FAILED" }
+    });
+    throw new AppError(httpStatus8.BAD_REQUEST, "Bkash Payment Was Not Completed");
+  }
+  return prisma.$transaction(async (transaction) => {
+    const paidPayment = await transaction.payment.update({
+      where: { id: payment.id },
+      data: {
+        status: "PAID",
+        transactionId: result.trxID,
+        paidAt: /* @__PURE__ */ new Date()
+      }
+    });
+    await transaction.invoice.update({
+      where: { id: payment.invoiceId },
+      data: { status: "PAID" }
+    });
+    return paidPayment;
+  });
+};
+var getPagination = (query) => {
+  const limitValue = Number(query.limit);
+  const pageValue = Number(query.page);
+  const limit = Number.isInteger(limitValue) && limitValue > 0 ? limitValue : 10;
+  const page = Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1;
+  return { limit, page, skip: (page - 1) * limit };
+};
+var getOrderBy = (query) => ({
+  [typeof query.sortBy === "string" ? query.sortBy : "createdAt"]: query.sortOrder === "asc" ? "asc" : "desc"
+});
+var paymentInclude = {
+  customer: { select: { id: true, name: true, email: true } },
+  invoice: { include: { serviceRequest: true } }
+};
+var getMyPayments = async (query, user) => {
+  const { limit, page, skip } = getPagination(query);
+  const where = { customerId: user.userId };
+  const [payments, total] = await Promise.all([
+    prisma.payment.findMany({ where, take: limit, skip, orderBy: getOrderBy(query), include: paymentInclude }),
+    prisma.payment.count({ where })
+  ]);
+  return {
+    data: payments,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
+};
+var getAllPayments = async (query) => {
+  const { limit, page, skip } = getPagination(query);
+  const where = query.customerEmail ? { customer: { email: String(query.customerEmail) } } : {};
+  const [payments, total] = await Promise.all([
+    prisma.payment.findMany({ where, take: limit, skip, orderBy: getOrderBy(query), include: paymentInclude }),
+    prisma.payment.count({ where })
+  ]);
+  return {
+    data: payments,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
+};
+var getSinglePayment = async (paymentId, user) => {
+  const payment = await prisma.payment.findUnique({
+    where: { id: paymentId },
+    include: paymentInclude
+  });
+  if (!payment) {
+    throw new AppError(httpStatus8.NOT_FOUND, "Payment Not Found");
+  }
+  if (user.role === Role.CUSTOMER && payment.customerId !== user.userId) {
+    throw new AppError(
+      httpStatus8.FORBIDDEN,
+      "You Are Not Allowed To View This Payment"
+    );
+  }
+  return payment;
+};
+var PaymentServices = {
+  createPayment,
+  executePayment,
+  getAllPayments,
+  getMyPayments,
+  getSinglePayment
+};
+
+// src/app/module/payment/payment.controller.ts
+var createPayment2 = catchAsync(async (req, res) => {
+  const user = req.user;
+  const result = await PaymentServices.createPayment(req.body.invoiceId, user);
+  sendResponse(res, {
+    statusCode: httpStatus9.CREATED,
+    success: true,
+    message: "Bkash Payment Created Successfully",
+    data: result
+  });
+});
+var executePayment2 = catchAsync(async (req, res) => {
+  const user = req.user;
+  const result = await PaymentServices.executePayment(req.body.paymentID, user);
+  sendResponse(res, {
+    statusCode: httpStatus9.OK,
+    success: true,
+    message: "Payment Executed Successfully",
+    data: result
+  });
+});
+var getMyPayments2 = catchAsync(async (req, res) => {
+  const user = req.user;
+  const { data, meta } = await PaymentServices.getMyPayments(req.query, user);
+  sendResponse(res, {
+    statusCode: httpStatus9.OK,
+    success: true,
+    message: "Payments Retrieved Successfully",
+    data,
+    meta
+  });
+});
+var getAllPayments2 = catchAsync(async (req, res) => {
+  const { data, meta } = await PaymentServices.getAllPayments(req.query);
+  sendResponse(res, {
+    statusCode: httpStatus9.OK,
+    success: true,
+    message: "Payments Retrieved Successfully",
+    data,
+    meta
+  });
+});
+var getSinglePayment2 = catchAsync(async (req, res) => {
+  const paymentId = req.params.paymentId;
+  const user = req.user;
+  const result = await PaymentServices.getSinglePayment(paymentId, user);
+  sendResponse(res, {
+    statusCode: httpStatus9.OK,
+    success: true,
+    message: "Payment Retrieved Successfully",
+    data: result
+  });
+});
+var PaymentController = {
+  createPayment: createPayment2,
+  executePayment: executePayment2,
+  getMyPayments: getMyPayments2,
+  getAllPayments: getAllPayments2,
+  getSinglePayment: getSinglePayment2
+};
+
+// src/app/module/payment/payment.route.ts
+var router15 = Router2();
+router15.post("/create", auth(Role.CUSTOMER), PaymentController.createPayment);
+router15.post("/execute", auth(Role.CUSTOMER), PaymentController.executePayment);
+router15.get("/my-payments", auth(Role.CUSTOMER), PaymentController.getMyPayments);
+router15.get(
+  "/all-payments",
+  auth(Role.MANAGER, Role.ADMIN, Role.FINANCE),
+  PaymentController.getAllPayments
+);
+router15.get(
+  "/:paymentId",
+  auth(Role.CUSTOMER, Role.MANAGER, Role.ADMIN, Role.FINANCE),
+  PaymentController.getSinglePayment
+);
+var PaymentRoutes = router15;
+
 // src/app.ts
 var app = express14();
 app.use(
@@ -3609,8 +3975,9 @@ app.use("/api/feedbacks", FeedbackRoutes);
 app.use("/api/notifications", NotificationRoutes);
 app.use("/api/attachments", AttachmentRoutes);
 app.use("/api/users", UserRoutes);
+app.use("/api/payments", PaymentRoutes);
 app.get("/", async (req, res) => {
-  res.status(httpStatus7.OK).json({
+  res.status(httpStatus10.OK).json({
     success: true,
     message: "Welcome to Field Service Management System Backend"
   });
