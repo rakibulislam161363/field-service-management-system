@@ -5,6 +5,10 @@ import { PaymentController } from "./payment.controller";
 
 const router = Router();
 
+router.post("/create", auth(Role.CUSTOMER), PaymentController.createPayment);
+
+router.post("/execute", auth(Role.CUSTOMER), PaymentController.executePayment);
+
 router.get("/my-payments", auth(Role.CUSTOMER), PaymentController.getMyPayments);
 
 router.get(

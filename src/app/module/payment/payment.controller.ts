@@ -4,6 +4,28 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { PaymentServices } from "./payment.service";
 
+const createPayment = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user!;
+	const result = await PaymentServices.createPayment(req.body.invoiceId, user);
+	sendResponse(res, {
+		statusCode: httpStatus.CREATED,
+		success: true,
+		message: "Bkash Payment Created Successfully",
+		data: result,
+	});
+});
+
+const executePayment = catchAsync(async (req: Request, res: Response) => {
+	const user = req.user!;
+	const result = await PaymentServices.executePayment(req.body.paymentID, user);
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		success: true,
+		message: "Payment Executed Successfully",
+		data: result,
+	});
+});
+
 const getMyPayments = catchAsync(async (req: Request, res: Response) => {
 	const user = req.user!;
 
@@ -42,6 +64,8 @@ const getSinglePayment = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const PaymentController = {
+	createPayment,
+	executePayment,
 	getMyPayments,
 	getAllPayments,
 	getSinglePayment,

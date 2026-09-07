@@ -123,3 +123,31 @@ export const getBkashIdToken = async () => {
 		throw new AppError(httpStatus.BAD_GATEWAY, error.message);
 	}
 };
+
+export const bkashRequest = async <T>(path: string, body: object) => {
+	const authorization = await getBkashIdToken();
+	const response = await fetch(`${config.bkash_base_url}${path}`, {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Accept: "application/json",
+			authorization,
+			"x-app-key": config.bkash_app_key,
+		},
+		body: JSON.stringify(body),
+	});
+
+	const result = (await response.json()) as T & {
+		statusCode?: string;
+		statusMessage?: string;
+	};
+
+	if (!response.ok || (result.statusCode && result.statusCode !== "0000")) {
+		throw new AppError(
+			httpStatus.BAD_GATEWAY,
+			result.statusMessage || "Bkash Request Failed",
+		);
+	}
+
+	return result;
+};
