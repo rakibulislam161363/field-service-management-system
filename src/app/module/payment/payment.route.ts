@@ -5,17 +5,17 @@ import { PaymentController } from "./payment.controller";
 
 const router = Router();
 
-router.get("/my-payments", auth(Role.PATIENT), PaymentController.getMyPayments);
+router.get("/my-payments", auth(Role.CUSTOMER), PaymentController.getMyPayments);
 
 router.get(
 	"/all-payments",
-	auth(Role.ADMIN, Role.SUPER_ADMIN),
+	auth(Role.MANAGER, Role.ADMIN, Role.FINANCE),
 	PaymentController.getAllPayments,
 );
 
 router.get(
 	"/:paymentId",
-	auth(Role.PATIENT, Role.ADMIN, Role.SUPER_ADMIN),
+	auth(Role.CUSTOMER, Role.MANAGER, Role.ADMIN, Role.FINANCE),
 	PaymentController.getSinglePayment,
 );
 

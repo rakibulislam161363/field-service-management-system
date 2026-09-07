@@ -1,50 +1,43 @@
 import httpStatus from "http-status";
 import { Role } from "../../../generated/prisma/enums";
 import { PaymentWhereInput } from "../../../generated/prisma/models";
-import { IQuery } from "../../interfaces";
 import { prisma } from "../../lib/prisma";
 import { RequestUser } from "../../middleware/checkAuth";
 import { AppError } from "../../utils/AppError";
 
-const getMyPayments = async (query: IQuery, user: RequestUser) => {
-	const limit = query.limit ? Number(query.limit) : 10;
-	const page = query.page ? Number(query.page) : 1;
-	const skip = (page - 1) * limit;
-	const sortBy = query.sortBy ? query.sortBy : "createdAt";
-	const sortOrder = query.sortOrder ? query.sortOrder : "desc";
+type PaymentQuery = {
+	limit?: unknown;
+	page?: unknown;
+	sortBy?: unknown;
+	sortOrder?: unknown;
+	customerEmail?: unknown;
+};
 
-	const patient = await prisma.patient.findUnique({
-		where: { userId: user.userId },
-	});
+const getPagination = (query: PaymentQuery) => {
+	const limitValue = Number(query.limit);
+	const pageValue = Number(query.page);
+	const limit = Number.isInteger(limitValue) && limitValue > 0 ? limitValue : 10;
+	const page = Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1;
+	return { limit, page, skip: (page - 1) * limit };
+};
 
-	if (!patient) {
-		throw new AppError(httpStatus.NOT_FOUND, "Patient Profile Not Found");
-	}
+const getOrderBy = (query: PaymentQuery) => ({
+	[typeof query.sortBy === "string" ? query.sortBy : "createdAt"]:
+		query.sortOrder === "asc" ? "asc" : "desc",
+});
 
-	const andConditions: PaymentWhereInput[] = [
-		{
-			appointment: { patientId: patient.id },
-		},
-	];
+const paymentInclude = {
+	customer: { select: { id: true, name: true, email: true } },
+	invoice: { include: { serviceRequest: true } },
+};
 
-	const payments = await prisma.payment.findMany({
-		where: { AND: andConditions },
-		take: limit,
-		skip,
-		orderBy: { [sortBy]: sortOrder },
-		include: {
-			appointment: {
-				include: {
-					doctor: { select: { id: true, name: true, specialization: true } },
-					schedule: true,
-				},
-			},
-		},
-	});
-
-	const total = await prisma.payment.count({
-		where: { AND: andConditions },
-	});
+const getMyPayments = async (query: PaymentQuery, user: RequestUser) => {
+	const { limit, page, skip } = getPagination(query);
+	const where: PaymentWhereInput = { customerId: user.userId };
+	const [payments, total] = await Promise.all([
+		prisma.payment.findMany({ where, take: limit, skip, orderBy: getOrderBy(query), include: paymentInclude }),
+		prisma.payment.count({ where }),
+	]);
 
 	return {
 		data: payments,
@@ -57,43 +50,15 @@ const getMyPayments = async (query: IQuery, user: RequestUser) => {
 	};
 };
 
-const getAllPayments = async (query: IQuery) => {
-	const limit = query.limit ? Number(query.limit) : 10;
-	const page = query.page ? Number(query.page) : 1;
-	const skip = (page - 1) * limit;
-	const sortBy = query.sortBy ? query.sortBy : "createdAt";
-	const sortOrder = query.sortOrder ? query.sortOrder : "desc";
-
-	const andConditions: PaymentWhereInput[] = [];
-
-	if (query.patientEmail) {
-		andConditions.push({
-			appointment: {
-				patient: {
-					email: query.email,
-				},
-			},
-		});
-	}
-
-	const payments = await prisma.payment.findMany({
-		where: { AND: andConditions },
-		take: limit,
-		skip,
-		orderBy: { [sortBy]: sortOrder },
-		include: {
-			appointment: {
-				include: {
-					doctor: { select: { id: true, name: true, specialization: true } },
-					schedule: true,
-				},
-			},
-		},
-	});
-
-	const total = await prisma.payment.count({
-		where: { AND: andConditions },
-	});
+const getAllPayments = async (query: PaymentQuery) => {
+	const { limit, page, skip } = getPagination(query);
+	const where: PaymentWhereInput = query.customerEmail
+		? { customer: { email: String(query.customerEmail) } }
+		: {};
+	const [payments, total] = await Promise.all([
+		prisma.payment.findMany({ where, take: limit, skip, orderBy: getOrderBy(query), include: paymentInclude }),
+		prisma.payment.count({ where }),
+	]);
 
 	return {
 		data: payments,
@@ -109,30 +74,18 @@ const getAllPayments = async (query: IQuery) => {
 const getSinglePayment = async (paymentId: string, user: RequestUser) => {
 	const payment = await prisma.payment.findUnique({
 		where: { id: paymentId },
-		include: {
-			appointment: {
-				include: {
-					patient: {
-						select: { id: true, name: true, email: true, userId: true },
-					},
-					doctor: { select: { id: true, name: true, specialization: true } },
-					schedule: true,
-				},
-			},
-		},
+		include: paymentInclude,
 	});
 
 	if (!payment) {
 		throw new AppError(httpStatus.NOT_FOUND, "Payment Not Found");
 	}
 
-	if (user.role === Role.PATIENT) {
-		if (payment.appointment.patient.userId !== user.userId) {
-			throw new AppError(
-				httpStatus.FORBIDDEN,
-				"You Are Not Allowed To View This Payment",
-			);
-		}
+	if (user.role === Role.CUSTOMER && payment.customerId !== user.userId) {
+		throw new AppError(
+			httpStatus.FORBIDDEN,
+			"You Are Not Allowed To View This Payment",
+		);
 	}
 
 	return payment;

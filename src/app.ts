@@ -23,6 +23,7 @@ import { FeedbackRoutes } from "./app/module/feedback/feedback.route";
 import { NotificationRoutes } from "./app/module/notification/notification.route";
 import { AttachmentRoutes } from "./app/module/attachment/attachment.route";
 import { UserRoutes } from "./app/module/user/user.route";
+import { PaymentRoutes } from "./app/module/payment/payment.route";
 
 const app: Application = express();
 
@@ -54,10 +55,10 @@ app.use("/api/feedbacks", FeedbackRoutes);
 app.use("/api/notifications", NotificationRoutes);
 app.use("/api/attachments", AttachmentRoutes);
 app.use("/api/users", UserRoutes);
+app.use("/api/payments", PaymentRoutes);
 // app.use("/api/v1/appointment", AppointementRoutes);
 // app.use("/api/v1/doctor", DoctorRoutes);
 // app.use("/api/v1/schedule", ScheduleRoutes);
-// app.use("/api/v1/payment", PaymentRoutes);
 // app.use("/api/v1/prescription", PrescriptionRoutes);
 // app.use("/api/v1/analytics", AnalyticsRoutes);
 
