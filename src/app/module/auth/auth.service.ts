@@ -276,6 +276,7 @@ const loginUser = async (payload: ILoginUserPayload) => {
 	return {
 		accessToken,
 		refreshToken,
+		user,
 	};
 };
 
